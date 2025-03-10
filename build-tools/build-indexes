@@ -12,8 +12,8 @@ process.chdir(rootDir);
 const repoUrl = process.env.SERVER_REPO_URL;
 
 if (!fs.existsSync('caches/pokemon-showdown')) {
-	child_process.execSync(`git clone ${repoUrl}`, {
-		cwd: 'caches/pokemon-showdown',
+	child_process.execSync(`git clone ${repoUrl} pokemon-showdown`, {
+		cwd: 'caches',
 		stdio: 'inherit',
 	});
 }
