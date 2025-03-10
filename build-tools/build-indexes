@@ -4,17 +4,22 @@
 const fs = require("fs");
 const path = require('path');
 const child_process = require("child_process");
+require('dotenv').config();
 
 const rootDir = path.resolve(__dirname, '..');
 process.chdir(rootDir);
 
+const repoUrl = process.env.SERVER_REPO_URL;
+
 if (!fs.existsSync('caches/pokemon-showdown')) {
-	child_process.execSync('git clone https://github.com/smogon/pokemon-showdown.git', {
-		cwd: 'caches',
+	child_process.execSync(`git clone ${repoUrl}`, {
+		cwd: 'caches/pokemon-showdown',
+		stdio: 'inherit',
 	});
 }
 
 process.stdout.write("Syncing data from Git repository... ");
+child_process.execSync(`git remote set-url origin ${repoUrl}`, {cwd: 'caches/pokemon-showdown'});
 child_process.execSync('git pull', { cwd: 'caches/pokemon-showdown' });
 child_process.execSync('npm run build', { cwd: 'caches/pokemon-showdown' });
 console.log("DONE");
