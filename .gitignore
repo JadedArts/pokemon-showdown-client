@@ -2,11 +2,10 @@ node_modules/
 .DS_Store
 Thumbs.db
 npm-debug.log
-/config/
+/config/config.js
 /vendor/
 /caches/
 
-/play.pokemonshowdown.com/sprites/
 /play.pokemonshowdown.com/audio/
 /play.pokemonshowdown.com/index.php
 /play.pokemonshowdown.com/index.html

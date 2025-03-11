@@ -4,17 +4,22 @@
 const fs = require("fs");
 const path = require('path');
 const child_process = require("child_process");
+require('dotenv').config();
 
 const rootDir = path.resolve(__dirname, '..');
 process.chdir(rootDir);
 
+const repoUrl = process.env.SERVER_REPO_URL;
+
 if (!fs.existsSync('caches/pokemon-showdown')) {
-	child_process.execSync('git clone https://github.com/smogon/pokemon-showdown.git', {
+	child_process.execSync(`git clone ${repoUrl} pokemon-showdown`, {
 		cwd: 'caches',
+		stdio: 'inherit',
 	});
 }
 
 process.stdout.write("Syncing data from Git repository... ");
+child_process.execSync(`git remote set-url origin ${repoUrl}`, {cwd: 'caches/pokemon-showdown'});
 child_process.execSync('git pull', { cwd: 'caches/pokemon-showdown' });
 child_process.execSync('npm run build', { cwd: 'caches/pokemon-showdown' });
 console.log("DONE");
@@ -971,20 +976,6 @@ process.stdout.write("Building `data/teambuilder-tables.js`... ");
 				learnsets[id][moveid] += 'a';
 			}
 			if (gens.indexOf(9) >= 0 && learnset[moveid].some(x => x === '9E')) learnsets[id][moveid] += 'e';
-		}
-	}
-	const G2Learnsets = Dex.mod('gen2').data.Learnsets;
-	for (const id in G2Learnsets) {
-		const learnset = G2Learnsets[id].learnset;
-		for (const moveid in learnset) {
-			const gens = learnset[moveid].map(x => Number(x[0]));
-			const minGen = Math.min(...gens);
-			if (!learnsets[id]) {
-				throw new Error(`${id} has a Gen 2 learnset but not a modern learnset`);
-			}
-			if (!learnsets[id][moveid]) learnsets[id][moveid] = '';
-			if (minGen === 2) learnsets[id][moveid] = '2' + learnsets[id][moveid];
-			if (minGen === 1) learnsets[id][moveid] = '12' + learnsets[id][moveid];
 		}
 	}
 	const G5BW1Learnsets = Dex.mod('gen5bw1').data.Learnsets;
